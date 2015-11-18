@@ -14,9 +14,7 @@ import gt.dakaik.rest.repository.SchoolRepository;
 import gt.dakaik.rest.repository.StateRepository;
 import gt.entities.Address;
 import gt.entities.City;
-import gt.entities.Country;
 import gt.entities.School;
-import gt.entities.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +40,7 @@ public class SchoolImpl implements WSSchool {
     CountryRepository repoCountry;
 
     @Override
-    public ResponseEntity<School> findById(int idUsuario, String token, Integer id) throws EntidadNoEncontradaException {
+    public ResponseEntity<School> findById(int idUsuario, String token, Long id) throws EntidadNoEncontradaException {
         School p = repoSchool.findOne(id);
 
         if (p != null) {
@@ -74,7 +72,7 @@ public class SchoolImpl implements WSSchool {
         ad.setTxtIndications(school.getAddress().getTxtIndications());
         ad.setTxtNumberHouse(school.getAddress().getTxtNumberHouse());
 
-        City ct = repoCity.findOne(school.getAddress().getCity().getIdCity());
+        City ct = repoCity.findOne(school.getAddress().getCity().getId());
         if (ct == null) {
             throw new EntidadNoEncontradaException("Entity City");
         }
@@ -87,7 +85,7 @@ public class SchoolImpl implements WSSchool {
 
     @Override
     public ResponseEntity<School> doUpdate(int idUsuario, String token, School school) throws EntidadNoEncontradaException, EntidadDuplicadaException {
-        School s = repoSchool.findOne(school.getIdSchool());
+        School s = repoSchool.findOne(school.getId());
         if (s == null) {
             throw new EntidadNoEncontradaException("Entity School");
         }
@@ -98,7 +96,7 @@ public class SchoolImpl implements WSSchool {
     }
 
     @Override
-    public ResponseEntity<School> onDelete(int idUsuario, String token, Integer idSchool) throws EntidadNoEncontradaException {
+    public ResponseEntity<School> onDelete(int idUsuario, String token, Long idSchool) throws EntidadNoEncontradaException {
         School s = repoSchool.findOne(idSchool);
         if (s == null) {
             throw new EntidadNoEncontradaException("Entity School");

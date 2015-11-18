@@ -15,10 +15,10 @@ import org.springframework.stereotype.Repository;
  * @author Dario Calderon
  */
 @Repository
-public interface DocumentTypeRepository extends PagingAndSortingRepository<DocumentType, Integer> {
+public interface DocumentTypeRepository extends PagingAndSortingRepository<DocumentType, Long> {
 
     @Override
-    public DocumentType findOne(Integer id);
+    public DocumentType findOne(Long id);
 
     
     @Override

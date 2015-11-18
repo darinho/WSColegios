@@ -33,7 +33,7 @@ public interface WSProfile {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Profile> findById(
             @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
-            @PathVariable("id") Integer id) throws EntidadNoEncontradaException;
+            @PathVariable("id") Long id) throws EntidadNoEncontradaException;
 
     @Transactional(readOnly = true)
     @RequestMapping(value = "/get", method = RequestMethod.GET)
@@ -58,6 +58,6 @@ public interface WSProfile {
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Profile> onDelete(
             @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
-            @PathVariable("id") Integer idProfile
+            @PathVariable("id") Long idProfile
     ) throws EntidadNoEncontradaException;
 }

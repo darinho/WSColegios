@@ -32,7 +32,7 @@ public interface WSSchool {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<School> findById(
             @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
-            @PathVariable("id") Integer id) throws EntidadNoEncontradaException;
+            @PathVariable("id") Long id) throws EntidadNoEncontradaException;
 
     @Transactional(readOnly = true)
     @RequestMapping(value = "/get", method = RequestMethod.GET)
@@ -57,6 +57,6 @@ public interface WSSchool {
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<School> onDelete(
             @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
-            @PathVariable("id") Integer idSchool
+            @PathVariable("id") Long idSchool
     ) throws EntidadNoEncontradaException;
 }

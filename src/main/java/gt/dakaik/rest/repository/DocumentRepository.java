@@ -6,7 +6,6 @@
 package gt.dakaik.rest.repository;
 
 import gt.entities.Document;
-import gt.entities.Person;
 import java.util.List;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
@@ -16,10 +15,10 @@ import org.springframework.stereotype.Repository;
  * @author Dario Calderon
  */
 @Repository
-public interface DocumentRepository extends PagingAndSortingRepository<Document, Integer> {
+public interface DocumentRepository extends PagingAndSortingRepository<Document, Long> {
 
     @Override
-    public Document findOne(Integer id);
+    public Document findOne(Long id);
 
     @Override
     List<Document> findAll();

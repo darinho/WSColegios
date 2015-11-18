@@ -18,7 +18,7 @@ import org.springframework.stereotype.Repository;
  * @author Dario Calderon
  */
 @Repository
-public interface UserSessionRepository extends PagingAndSortingRepository<UserSession, Integer> {
+public interface UserSessionRepository extends PagingAndSortingRepository<UserSession, Long> {
 
     @Query("from UserSession where user = :user and endDate = startDate")
     List<UserSession> getValidUsuarioSesions(@Param("user") User user);

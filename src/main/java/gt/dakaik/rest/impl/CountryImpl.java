@@ -43,7 +43,7 @@ public class CountryImpl implements WSCountry {
     CityRepository repoCity;
 
     @Override
-    public ResponseEntity<Country> findById(int idUsuario, String token, Integer id) throws EntidadNoEncontradaException {
+    public ResponseEntity<Country> findById(int idUsuario, String token, Long id) throws EntidadNoEncontradaException {
         Country p = repoCountry.findOne(id);
 
         if (p != null) {
@@ -63,7 +63,7 @@ public class CountryImpl implements WSCountry {
         if (country == null) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
-        Country c = repoCountry.findOne(country.getIdCountry());
+        Country c = repoCountry.findOne(country.getId());
 
         if (c == null) {
             c = new Country();
@@ -72,7 +72,7 @@ public class CountryImpl implements WSCountry {
         }
 
         for (State st : country.getStates()) {
-            State stN = repoState.findOne(st.getIdState());
+            State stN = repoState.findOne(st.getId());
             if (stN == null) {
                 stN = new State();
                 stN.setTxtName(st.getTxtName());
@@ -80,7 +80,7 @@ public class CountryImpl implements WSCountry {
                 repoState.save(stN);
             }
             for (City ct : st.getCities()) {
-                City ctN = repoCity.findOne(ct.getIdCity());
+                City ctN = repoCity.findOne(ct.getId());
                 if (ctN == null) {
                     ctN = new City();
                     ctN.setTxtName(ct.getTxtName());

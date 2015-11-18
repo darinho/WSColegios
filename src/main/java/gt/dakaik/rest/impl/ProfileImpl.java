@@ -8,19 +8,11 @@ package gt.dakaik.rest.impl;
 import gt.dakaik.exceptions.EntidadDuplicadaException;
 import gt.dakaik.exceptions.EntidadNoEncontradaException;
 import gt.dakaik.rest.interfaces.WSProfile;
-import gt.dakaik.rest.interfaces.WSUser;
 import gt.dakaik.rest.repository.ProfileRepository;
 import gt.dakaik.rest.repository.SchoolRepository;
 import gt.dakaik.rest.repository.UserProfileRepository;
 import gt.dakaik.rest.repository.UserRepository;
 import gt.entities.Profile;
-import gt.entities.School;
-import gt.entities.User;
-import gt.entities.Resources;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +38,7 @@ public class ProfileImpl implements WSProfile {
     ProfileRepository repoProfile;
 
     @Override
-    public ResponseEntity<Profile> findById(int idUsuario, String token, Integer id) throws EntidadNoEncontradaException {
+    public ResponseEntity<Profile> findById(int idUsuario, String token, Long id) throws EntidadNoEncontradaException {
         Profile p = repoProfile.findOne(id);
 
         if (p != null) {
@@ -69,7 +61,7 @@ public class ProfileImpl implements WSProfile {
 
     @Override
     public ResponseEntity<Profile> doUpdate(int idUsuario, String token, Profile profile) throws EntidadNoEncontradaException, EntidadDuplicadaException {
-        Profile p = repoProfile.findOne(profile.getIdProfile());
+        Profile p = repoProfile.findOne(profile.getId());
         if (p == null) {
             throw new EntidadNoEncontradaException("Entity User");
         }
@@ -80,7 +72,7 @@ public class ProfileImpl implements WSProfile {
     }
 
     @Override
-    public ResponseEntity<Profile> onDelete(int idUsuario, String token, Integer idProfile) throws EntidadNoEncontradaException {
+    public ResponseEntity<Profile> onDelete(int idUsuario, String token, Long idProfile) throws EntidadNoEncontradaException {
         Profile p = repoProfile.findOne(idProfile);
         if (p == null) {
             throw new EntidadNoEncontradaException("Entity User");

@@ -35,7 +35,7 @@ public class DocumentTypeImpl implements WSDocumentType {
     DocumentTypeRepository repoDocumentType;
 
     @Override
-    public ResponseEntity<DocumentType> findById(int idUsuario, String token, Integer id) throws EntidadNoEncontradaException {
+    public ResponseEntity<DocumentType> findById(int idUsuario, String token, Long id) throws EntidadNoEncontradaException {
         DocumentType p = repoDocumentType.findOne(id);
 
         if (p != null) {
@@ -61,7 +61,7 @@ public class DocumentTypeImpl implements WSDocumentType {
     }
 
     @Override
-    public ResponseEntity<DocumentType> onDelete(int idUsuario, String token, Integer idDocumentType) throws EntidadNoEncontradaException {
+    public ResponseEntity<DocumentType> onDelete(int idUsuario, String token, Long idDocumentType) throws EntidadNoEncontradaException {
         throw new EntidadNoEncontradaException("Entity User");
     }
 

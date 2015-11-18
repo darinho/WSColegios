@@ -20,9 +20,9 @@ import java.util.TimerTask;
 public class Common {
 
     static final String TOKEN = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    static final Map<String, Integer> activeSession = new HashMap<>();
+    static final Map<String, Long> activeSession = new HashMap<>();
     static final Map<String, Integer> activeTimeSession = new HashMap<>();
-    static final Map<Integer, String> userSession = new HashMap<>();
+    static final Map<Long, String> userSession = new HashMap<>();
     static final Timer validSession = new Timer();
     static final Timer discountTime = new Timer();
     static final int secVerified = 60;
@@ -37,7 +37,7 @@ public class Common {
                     int mins = e.getValue() - 1;
                     if (mins == 0) {
                         String token = e.getKey();
-                        int idUser = activeSession.get(token);
+                        Long idUser = activeSession.get(token);
                         activeSession.remove(token);
                         activeTimeSession.remove(token);
                         userSession.remove(idUser);
@@ -68,21 +68,21 @@ public class Common {
         return daysBetween;
     }
 
-    public static String setTokenLocal(String token, Integer idUser) {
+    public static String setTokenLocal(String token, Long idUser) {
         activeSession.put(token, idUser);
         activeTimeSession.put(token, minsSession);
         userSession.put(idUser, token);
         return token;
     }
 
-    public static void cleanSessionPrev(Integer idUser) {
+    public static void cleanSessionPrev(Long idUser) {
         String token = userSession.get(idUser);
         activeSession.remove(token);
         activeTimeSession.remove(token);
     }
 
-    public static boolean validSession(String token, Integer idUser) {
-        Integer i = activeSession.getOrDefault(token, -1);
+    public static boolean validSession(String token, Long idUser) {
+        Long i = activeSession.getOrDefault(token, new Long(-1));
 
         if (Objects.equals(i, idUser)) {
             activeTimeSession.replace(token, minsSession);

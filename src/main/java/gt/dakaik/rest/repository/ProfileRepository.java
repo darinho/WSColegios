@@ -15,10 +15,10 @@ import org.springframework.stereotype.Repository;
  * @author Dario Calderon
  */
 @Repository
-public interface ProfileRepository extends PagingAndSortingRepository<Profile, Integer> {
+public interface ProfileRepository extends PagingAndSortingRepository<Profile, Long> {
 
     @Override
-    public Profile findOne(Integer id);
+    public Profile findOne(Long id);
 
     @Override
     List<Profile> findAll();

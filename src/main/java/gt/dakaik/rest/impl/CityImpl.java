@@ -5,17 +5,11 @@
  */
 package gt.dakaik.rest.impl;
 
-import gt.dakaik.exceptions.EntidadDuplicadaException;
 import gt.dakaik.exceptions.EntidadNoEncontradaException;
 import gt.dakaik.rest.interfaces.WSCity;
 import gt.dakaik.rest.repository.CityRepository;
-import gt.dakaik.rest.repository.SchoolRepository;
-import gt.dakaik.rest.repository.CityRepository;
-import gt.dakaik.rest.repository.StateRepository;
 import gt.dakaik.rest.repository.UserRepository;
 import gt.entities.City;
-import gt.entities.City;
-import gt.entities.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +31,7 @@ public class CityImpl implements WSCity {
     CityRepository repoCity;
 
     @Override
-    public ResponseEntity<City> findById(int idUsuario, String token, Integer id) throws EntidadNoEncontradaException {
+    public ResponseEntity<City> findById(int idUsuario, String token, Long id) throws EntidadNoEncontradaException {
         City p = repoCity.findOne(id);
 
         if (p != null) {

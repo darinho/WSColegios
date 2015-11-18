@@ -15,10 +15,10 @@ import org.springframework.stereotype.Repository;
  * @author Dario Calderon
  */
 @Repository
-public interface SchoolRepository extends PagingAndSortingRepository<School, Integer> {
+public interface SchoolRepository extends PagingAndSortingRepository<School, Long> {
 
     @Override
-    public School findOne(Integer id);
+    public School findOne(Long id);
 
     @Override
     List<School> findAll();

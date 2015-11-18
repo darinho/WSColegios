@@ -16,10 +16,10 @@ import org.springframework.stereotype.Repository;
  * @author Dario Calderon
  */
 @Repository
-public interface CountryRepository extends PagingAndSortingRepository<Country, Integer> {
+public interface CountryRepository extends PagingAndSortingRepository<Country, Long> {
 
     @Override
-    public Country findOne(Integer id);
+    public Country findOne(Long id);
 
     @Override
     List<Country> findAll();

@@ -35,7 +35,7 @@ public interface WSUser {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<User> findById(
             @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
-            @PathVariable("id") Integer id) throws EntidadNoEncontradaException;
+            @PathVariable("id") Long id) throws EntidadNoEncontradaException;
 
     @Transactional(readOnly = true)
     @RequestMapping(value = "/get", method = RequestMethod.GET)
@@ -60,7 +60,7 @@ public interface WSUser {
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<User> onDelete(
             @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
-            @PathVariable("id") Integer id
+            @PathVariable("id") Long id
     ) throws EntidadNoEncontradaException;
 
     @Transactional()

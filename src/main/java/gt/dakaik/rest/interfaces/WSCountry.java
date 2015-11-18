@@ -32,7 +32,7 @@ public interface WSCountry {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Country> findById(
             @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
-            @PathVariable("id") Integer id) throws EntidadNoEncontradaException;
+            @PathVariable("id") Long id) throws EntidadNoEncontradaException;
 
     @Transactional(readOnly = true)
     @RequestMapping(value = "/get", method = RequestMethod.GET)
