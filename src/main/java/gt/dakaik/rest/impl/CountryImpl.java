@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class CountryImpl implements WSCountry {
-
+    
     Logger eLog = LoggerFactory.getLogger(this.getClass());
     @Autowired
     UserRepository repoU;
@@ -41,56 +41,59 @@ public class CountryImpl implements WSCountry {
     StateRepository repoState;
     @Autowired
     CityRepository repoCity;
-
+    
     @Override
     public ResponseEntity<Country> findById(int idUsuario, String token, Long id) throws EntidadNoEncontradaException {
         Country p = repoCountry.findOne(id);
-
+        
         if (p != null) {
             return new ResponseEntity(p, HttpStatus.OK);
         } else {
             throw new EntidadNoEncontradaException("Entity User");
         }
     }
-
+    
     @Override
     public ResponseEntity<Country> findAll(int idUsuario, String token) throws EntidadNoEncontradaException {
         return new ResponseEntity(repoCountry.getAll(), HttpStatus.OK);
     }
-
+    
     @Override
     public ResponseEntity<Country> doCreate(Country country, int idUsuario, String token) throws EntidadDuplicadaException {
         if (country == null) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
-        Country c = repoCountry.findOne(country.getId());
-
+        Country c = country.getId() != null ? repoCountry.findOne(country.getId()) : null;
+        
         if (c == null) {
             c = new Country();
             c.setTxtName(country.getTxtName());
+            c.setSnActive(true);
             repoCountry.save(c);
         }
-
+        
         for (State st : country.getStates()) {
-            State stN = repoState.findOne(st.getId());
+            State stN = st.getId() != null ? repoState.findOne(st.getId()) : null;
             if (stN == null) {
                 stN = new State();
                 stN.setTxtName(st.getTxtName());
+                stN.setSnActive(true);
                 stN.setCountry(c);
                 repoState.save(stN);
             }
             for (City ct : st.getCities()) {
-                City ctN = repoCity.findOne(ct.getId());
+                City ctN = ct.getId() != null ? repoCity.findOne(ct.getId()) : null;
                 if (ctN == null) {
                     ctN = new City();
                     ctN.setTxtName(ct.getTxtName());
+                    ctN.setSnActive(true);
                     ctN.setState(stN);
                     repoCity.save(ctN);
                 }
             }
         }
-
+        
         return new ResponseEntity(c, HttpStatus.OK);
     }
-
+    
 }

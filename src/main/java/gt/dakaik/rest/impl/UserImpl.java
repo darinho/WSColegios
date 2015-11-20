@@ -114,6 +114,7 @@ public class UserImpl implements WSUser {
             }
             List<Document> doctos = new ArrayList<>();
             for (Document d : user.getPerson().getDocuments()) {
+//            for (Document d : doctos) {
                 if (d == null || d.getTxtDocument().equals("")) {
                     throw new EntidadDuplicadaException("msj_document_required");
                 }
