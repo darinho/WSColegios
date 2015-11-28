@@ -72,7 +72,7 @@ public class SchoolImpl implements WSSchool {
         ad.setTxtIndications(school.getAddress().getTxtIndications());
         ad.setTxtNumberHouse(school.getAddress().getTxtNumberHouse());
 
-        City ct = repoCity.findOne(school.getAddress().getCity().getId());
+        City ct = repoCity.findOne(school.getAddress().getCity().getIdCity());
         if (ct == null) {
             throw new EntidadNoEncontradaException("Entity City");
         }
@@ -85,7 +85,7 @@ public class SchoolImpl implements WSSchool {
 
     @Override
     public ResponseEntity<School> doUpdate(int idUsuario, String token, School school) throws EntidadNoEncontradaException, EntidadDuplicadaException {
-        School s = repoSchool.findOne(school.getId());
+        School s = repoSchool.findOne(school.getIdSchool());
         if (s == null) {
             throw new EntidadNoEncontradaException("Entity School");
         }

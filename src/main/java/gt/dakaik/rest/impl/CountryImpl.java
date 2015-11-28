@@ -63,30 +63,30 @@ public class CountryImpl implements WSCountry {
         if (country == null) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
-        Country c = country.getId() != null ? repoCountry.findOne(country.getId()) : null;
+        Country c = country.getIdCountry()!= null ? repoCountry.findOne(country.getIdCountry()) : null;
         
         if (c == null) {
             c = new Country();
             c.setTxtName(country.getTxtName());
-            c.setSnActive(true);
+//            c.set(true);
             repoCountry.save(c);
         }
         
         for (State st : country.getStates()) {
-            State stN = st.getId() != null ? repoState.findOne(st.getId()) : null;
+            State stN = st.getIdState()!= null ? repoState.findOne(st.getIdState()) : null;
             if (stN == null) {
                 stN = new State();
                 stN.setTxtName(st.getTxtName());
-                stN.setSnActive(true);
+                //stN.setSnActive(true);
                 stN.setCountry(c);
                 repoState.save(stN);
             }
             for (City ct : st.getCities()) {
-                City ctN = ct.getId() != null ? repoCity.findOne(ct.getId()) : null;
+                City ctN = ct.getIdCity()!= null ? repoCity.findOne(ct.getIdCity()) : null;
                 if (ctN == null) {
                     ctN = new City();
                     ctN.setTxtName(ct.getTxtName());
-                    ctN.setSnActive(true);
+//                    ctN.setSnActive(true);
                     ctN.setState(stN);
                     repoCity.save(ctN);
                 }

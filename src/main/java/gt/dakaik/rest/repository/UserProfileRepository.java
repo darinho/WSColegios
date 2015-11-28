@@ -8,7 +8,7 @@ package gt.dakaik.rest.repository;
 import gt.entities.Profile;
 import gt.entities.School;
 import gt.entities.User;
-import gt.entities.Resources;
+import gt.entities.UserProfile;
 import java.util.List;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
@@ -18,14 +18,14 @@ import org.springframework.stereotype.Repository;
  * @author Dario Calderon
  */
 @Repository
-public interface UserProfileRepository extends PagingAndSortingRepository<Resources, Long> {
+public interface UserProfileRepository extends PagingAndSortingRepository<UserProfile, Long> {
 
     @Override
-    public Resources findOne(Long id);
+    public UserProfile findOne(Long id);
 
     @Override
-    List<Resources> findAll();
+    List<UserProfile> findAll();
     
-    Resources findBySchoolAndUserAndProfile(School school, User user, Profile profile);
+    UserProfile findBySchoolAndUserAndProfile(School school, User user, Profile profile);
 
 }

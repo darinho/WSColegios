@@ -29,7 +29,8 @@ import gt.entities.Person;
 import gt.entities.Profile;
 import gt.entities.School;
 import gt.entities.User;
-import gt.entities.Resources;
+import gt.entities.UserProfile;
+//import gt.entities.Resources;
 import gt.entities.UserSession;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -122,7 +123,7 @@ public class UserImpl implements WSUser {
                 if (doc != null) {
                     throw new EntidadDuplicadaException("msj_document");
                 }
-                DocumentType dt = repoDocumentType.findOne(d.getDocumentType().getId());
+                DocumentType dt = repoDocumentType.findOne(d.getDocumentType().getIdDocumentType());
                 if (dt == null) {
                     return new ResponseEntity("msj_document_type_required", HttpStatus.CONFLICT);
                 }
@@ -148,7 +149,7 @@ public class UserImpl implements WSUser {
             ad.setTxtIndications(user.getPerson().getAddress().getTxtIndications());
             ad.setTxtNumberHouse(user.getPerson().getAddress().getTxtNumberHouse());
             
-            City ct = repoCity.findOne(user.getPerson().getAddress().getCity().getId());
+            City ct = repoCity.findOne(user.getPerson().getAddress().getCity().getIdCity());
             if (ct == null) {
                 throw new EntidadNoEncontradaException("Entity City");
             }
@@ -162,11 +163,11 @@ public class UserImpl implements WSUser {
             });
             
             repoDocument.save(doctos);
-            String pwd = user.getTxtPwd() != null ? user.getTxtPwd() : "UsCollage" + person.getId();
+            String pwd = user.getTxtPwd() != null ? user.getTxtPwd() : "UsCollage" + person.getIdPerson();
             u.setLastDatePwd(new Date());
             u.setIntDaysChangePwd(user.getIntDaysChangePwd() == 0 ? 30 : user.getIntDaysChangePwd());
             u.setSnChangePwd(false);
-            u.setId(user.getId());
+            u.setIdUser(user.getIdUser());
             u.setTxtPwd(CommonEncripta.get_md5(pwd));
             u.setTxtUser(user.getTxtUser());
             u.setSnActive(true);
@@ -182,10 +183,10 @@ public class UserImpl implements WSUser {
             return new ResponseEntity(mpResp, HttpStatus.BAD_REQUEST);
         }
         
-        Resources pro = user.getUserProfiles().get(0);
-        Resources up = new Resources();
+        UserProfile pro = user.getUserProfiles().get(0);
+        UserProfile up = new UserProfile();
         
-        Profile profile = repoProfile.findOne(pro.getProfile().getId());
+        Profile profile = repoProfile.findOne(pro.getProfile().getIdProfile());
         
         if (profile == null) {
             mpResp.put("message", "msj_no_existe");
@@ -194,7 +195,8 @@ public class UserImpl implements WSUser {
         }
         up.setProfile(profile);
         
-        School school = repoSchool.findOne(pro.getSchool().getId());
+        School school = repoSchool.findOne(pro.getSchool().getIdSchool());
+        
         
         if (school == null) {
             mpResp.put("message", "msj_no_existe");
@@ -202,10 +204,10 @@ public class UserImpl implements WSUser {
             return new ResponseEntity(mpResp, HttpStatus.NOT_FOUND);
         }
         up.setSchool(school);
-        up.setIdResource(school.getId());
+        up.setIdUserProfile(school.getIdSchool());
         
         if (isUser) {
-            Resources upro = repoUProfile.findBySchoolAndUserAndProfile(school, u, profile);
+            UserProfile upro = repoUProfile.findBySchoolAndUserAndProfile(school, u, profile);
             if (upro != null) {
                 throw new EntidadDuplicadaException("User");
             }
@@ -213,12 +215,12 @@ public class UserImpl implements WSUser {
         
         up.setUser(u);
         repoUProfile.save(up);
-        return new ResponseEntity(repoU.findOne(u.getId()), HttpStatus.OK);
+        return new ResponseEntity(repoU.findOne(u.getIdUser()), HttpStatus.OK);
     }
     
     @Override
     public ResponseEntity<User> doUpdate(int idUsuario, String token, User user) throws EntidadNoEncontradaException, EntidadDuplicadaException {
-        User u = repoU.findOne(user.getId());
+        User u = repoU.findOne(user.getIdUser());
         if (u == null) {
             throw new EntidadNoEncontradaException("User");
         }
@@ -255,7 +257,7 @@ public class UserImpl implements WSUser {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
         
-        Common.cleanSessionPrev(u.getId());
+        Common.cleanSessionPrev(u.getIdUser());
 
         /*List<UserSession> sessions = rs.getValidUsuarioSesions(u);
          List<UserSession> closeSessions = new ArrayList<>();
@@ -283,7 +285,7 @@ public class UserImpl implements WSUser {
         /*UserSession sesion = new UserSession(0, u, token, new Date(), new Date());
 
          rs.save(sesion);*/
-        Common.setTokenLocal(token, u.getId());
+        Common.setTokenLocal(token, u.getIdUser());
         DTOSession sesion = new DTOSession();
         sesion.setUser(u);
         sesion.setToken(token);

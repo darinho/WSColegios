@@ -61,7 +61,7 @@ public class ProfileImpl implements WSProfile {
 
     @Override
     public ResponseEntity<Profile> doUpdate(int idUsuario, String token, Profile profile) throws EntidadNoEncontradaException, EntidadDuplicadaException {
-        Profile p = repoProfile.findOne(profile.getId());
+        Profile p = repoProfile.findOne(profile.getIdProfile());
         if (p == null) {
             throw new EntidadNoEncontradaException("Entity User");
         }
