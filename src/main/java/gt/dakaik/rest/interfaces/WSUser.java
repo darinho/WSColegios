@@ -10,7 +10,6 @@ import gt.dakaik.exceptions.EntidadDuplicadaException;
 import gt.dakaik.exceptions.EntidadNoEncontradaException;
 import gt.dakaik.exceptions.GeneralException;
 import gt.entities.User;
-import gt.entities.UserSession;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;

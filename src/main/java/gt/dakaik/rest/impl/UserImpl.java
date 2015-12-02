@@ -15,6 +15,8 @@ import gt.dakaik.rest.interfaces.WSUser;
 import gt.dakaik.rest.repository.CityRepository;
 import gt.dakaik.rest.repository.DocumentRepository;
 import gt.dakaik.rest.repository.DocumentTypeRepository;
+import gt.dakaik.rest.repository.LicenceRepository;
+import gt.dakaik.rest.repository.LicenceTypeRepository;
 import gt.dakaik.rest.repository.PersonRepository;
 import gt.dakaik.rest.repository.ProfileRepository;
 import gt.dakaik.rest.repository.SchoolRepository;
@@ -25,13 +27,14 @@ import gt.entities.Address;
 import gt.entities.City;
 import gt.entities.Document;
 import gt.entities.DocumentType;
+import gt.entities.LicenceType;
+import gt.entities.Licences;
 import gt.entities.Person;
 import gt.entities.Profile;
 import gt.entities.School;
+import gt.entities.Status;
 import gt.entities.User;
 import gt.entities.UserProfile;
-//import gt.entities.Resources;
-import gt.entities.UserSession;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -51,7 +54,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class UserImpl implements WSUser {
-    
+
     Logger eLog = LoggerFactory.getLogger(this.getClass());
     TokenImpl tokenI = new TokenImpl();
     @Autowired
@@ -60,6 +63,10 @@ public class UserImpl implements WSUser {
     UserProfileRepository repoUProfile;
     @Autowired
     SchoolRepository repoSchool;
+    @Autowired
+    LicenceRepository repoLic;
+    @Autowired
+    LicenceTypeRepository repoLicType;
     @Autowired
     CityRepository repoCity;
     @Autowired
@@ -72,32 +79,23 @@ public class UserImpl implements WSUser {
     DocumentRepository repoDocument;
     @Autowired
     DocumentTypeRepository repoDocumentType;
-    
+
     @Override
     public ResponseEntity<User> findById(int idUsuario, String token, Long id) throws EntidadNoEncontradaException {
         User u = repoU.findOne(id);
-        
+
         if (u != null) {
             return new ResponseEntity(u, HttpStatus.OK);
         } else {
             throw new EntidadNoEncontradaException("Entity User");
         }
     }
-    
-    private boolean validaToken(String token, int idUsuario) throws GeneralException {
-        boolean resp = false;
-        tokenI.setRepo(repoU, rs);
-        if (tokenI.validaTokenUsuarioOperaciones(token, idUsuario)) {
-            resp = true;
-        }
-        return resp;
-    }
-    
+
     @Override
     public ResponseEntity<User> findAll(int idUsuario, String token) throws EntidadNoEncontradaException {
         return new ResponseEntity(repoU.findAll(), HttpStatus.OK);
     }
-    
+
     @Override
     public ResponseEntity<User> doCreate(User user, int idUsuario, String token) throws EntidadDuplicadaException, EntidadNoEncontradaException {
         User u = repoU.findByTxtUser(user.getTxtUser());
@@ -105,11 +103,11 @@ public class UserImpl implements WSUser {
         Map<String, String> mpResp = new HashMap<>();
         if (u == null) {
             u = new User();
-            
+
             if (user.getPerson() == null) {
                 return new ResponseEntity("msj_person_required", HttpStatus.CONFLICT);
             }
-            
+
             if (user.getPerson().getDocuments().isEmpty()) {
                 throw new EntidadDuplicadaException("msj_document_required");
             }
@@ -127,15 +125,16 @@ public class UserImpl implements WSUser {
                 if (dt == null) {
                     return new ResponseEntity("msj_document_type_required", HttpStatus.CONFLICT);
                 }
-                
+
                 doc = new Document();
                 doc.setDocumentType(dt);
                 doc.setTxtDocument(d.getTxtDocument());
+                doc.setSnActive(true);
                 doctos.add(doc);
             }
-            
+
             Person p = new Person();
-            
+
             p.setTxtFullName(user.getPerson().getTxtFullName());
             p.setTxtFirstNameF(user.getPerson().getTxtFirstNameF());
             p.setTxtFirstNameS(user.getPerson().getTxtFirstNameS());
@@ -143,25 +142,26 @@ public class UserImpl implements WSUser {
             p.setTxtLastNameF(user.getPerson().getTxtLastNameF());
             p.setTxtLastNameS(user.getPerson().getTxtLastNameS());
             p.setTxtLastNameT(user.getPerson().getTxtLastNameT());
+            p.setSnActive(true);
             Address ad = new Address();
             ad.setIntZone(user.getPerson().getAddress().getIntZone());
             ad.setTxtColony(user.getPerson().getAddress().getTxtColony());
             ad.setTxtIndications(user.getPerson().getAddress().getTxtIndications());
             ad.setTxtNumberHouse(user.getPerson().getAddress().getTxtNumberHouse());
-            
+
             City ct = repoCity.findOne(user.getPerson().getAddress().getCity().getIdCity());
             if (ct == null) {
                 throw new EntidadNoEncontradaException("Entity City");
             }
-            
+
             ad.setCity(ct);
             p.setAddress(ad);
             Person person = repoPerson.save(p);
-            
+
             doctos.stream().forEach((d) -> {
                 d.setPerson(person);
             });
-            
+
             repoDocument.save(doctos);
             String pwd = user.getTxtPwd() != null ? user.getTxtPwd() : "UsCollage" + person.getIdPerson();
             u.setLastDatePwd(new Date());
@@ -172,52 +172,66 @@ public class UserImpl implements WSUser {
             u.setTxtUser(user.getTxtUser());
             u.setSnActive(true);
             u.setPerson(person);
-            
+
             repoU.save(u);
             isUser = false;
         }
-        
+
         if (user.getUserProfiles().isEmpty()) {
             mpResp.put("message", "msj_falta_perfil");
             mpResp.put("valor", "userProfile");
             return new ResponseEntity(mpResp, HttpStatus.BAD_REQUEST);
         }
-        
+
         UserProfile pro = user.getUserProfiles().get(0);
         UserProfile up = new UserProfile();
-        
+
         Profile profile = repoProfile.findOne(pro.getProfile().getIdProfile());
-        
+
         if (profile == null) {
             mpResp.put("message", "msj_no_existe");
             mpResp.put("valor", "profile");
             return new ResponseEntity(mpResp, HttpStatus.NOT_FOUND);
         }
         up.setProfile(profile);
-        
-        School school = repoSchool.findOne(pro.getSchool().getIdSchool());
-        
-        
+
+        School school = repoSchool.findOne(pro.getLicence().getSchool().getIdSchool());
         if (school == null) {
             mpResp.put("message", "msj_no_existe");
             mpResp.put("valor", "school");
             return new ResponseEntity(mpResp, HttpStatus.NOT_FOUND);
         }
-        up.setSchool(school);
+        LicenceType licType = repoLicType.findOne(pro.getLicence().getLicenceType().getId());
+        if (licType == null) {
+            mpResp.put("message", "msj_no_existe");
+            mpResp.put("valor", "LicenceType");
+            return new ResponseEntity(mpResp, HttpStatus.NOT_FOUND);
+        }
+        Licences licence = repoLic.findTopBySchoolAndLicenceTypeAndStatusOrderByDatesAsc(school, licType, Status.A);
+
+        if (licence == null) {
+            mpResp.put("message", "msj_no_hay_licencias");
+            mpResp.put("valor", "Licence");
+            return new ResponseEntity(mpResp, HttpStatus.NOT_FOUND);
+        }
+
+        up.setLicence(licence);
         up.setIdUserProfile(school.getIdSchool());
-        
+
         if (isUser) {
-            UserProfile upro = repoUProfile.findBySchoolAndUserAndProfile(school, u, profile);
+            UserProfile upro = repoUProfile.findByLicenceYUserYProfile(school, u, profile);
             if (upro != null) {
                 throw new EntidadDuplicadaException("User");
             }
         }
-        
+
         up.setUser(u);
         repoUProfile.save(up);
+        licence.setStatus(Status.U);
+        repoLic.save(licence);
         return new ResponseEntity(repoU.findOne(u.getIdUser()), HttpStatus.OK);
     }
-    
+
     @Override
     public ResponseEntity<User> doUpdate(int idUsuario, String token, User user) throws EntidadNoEncontradaException, EntidadDuplicadaException {
         User u = repoU.findOne(user.getIdUser());
@@ -225,13 +239,13 @@ public class UserImpl implements WSUser {
             throw new EntidadNoEncontradaException("User");
         }
         Person p = u.getPerson();
-        
+
         p.setTxtFullName(user.getPerson().getTxtFullName());
         u.setTxtPwd(CommonEncripta.get_md5(user.getTxtPwd()));
-        
+
         return new ResponseEntity(repoU.save(u), HttpStatus.OK);
     }
-    
+
     @Override
     public ResponseEntity<User> onDelete(int idUsuario, String token, Long idUser) throws EntidadNoEncontradaException {
         User u = repoU.findOne(idUser);
@@ -239,24 +253,24 @@ public class UserImpl implements WSUser {
             throw new EntidadNoEncontradaException("User");
         }
         u.setSnActive(Boolean.FALSE);
-        
+
         return new ResponseEntity(repoU.save(u), HttpStatus.OK);
     }
-    
+
     @Override
     public ResponseEntity<DTOSession> login(String sUsuario, String pwds) throws GeneralException {
         User u = repoU.findByTxtUser(sUsuario);
-        
+
         if (u == null) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
-        
+
         String pwd = CommonEncripta.get_md5(pwds);
-        
+
         if (!u.getTxtPwd().equals(pwd)) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
-        
+
         Common.cleanSessionPrev(u.getIdUser());
 
         /*List<UserSession> sessions = rs.getValidUsuarioSesions(u);
@@ -270,14 +284,14 @@ public class UserImpl implements WSUser {
 
          rs.save(closeSessions);*/
         String token = Common.getToken();
-        
+
         Calendar cal1 = Calendar.getInstance();
         cal1.setTime(new Date());
         Calendar cal2 = Calendar.getInstance();
         cal2.setTime(u.getLastDatePwd());
-        
+
         long iDias = Common.daysBetween(cal2, cal1);
-        
+
         if (iDias > (u.getIntDaysChangePwd() == 0 ? 60 : u.getIntDaysChangePwd())) {
             u.setSnChangePwd(false);
         }
@@ -289,8 +303,8 @@ public class UserImpl implements WSUser {
         DTOSession sesion = new DTOSession();
         sesion.setUser(u);
         sesion.setToken(token);
-        
+
         return new ResponseEntity(sesion, HttpStatus.OK);
     }
-    
+
 }

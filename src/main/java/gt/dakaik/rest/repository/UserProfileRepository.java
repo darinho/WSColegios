@@ -10,7 +10,9 @@ import gt.entities.School;
 import gt.entities.User;
 import gt.entities.UserProfile;
 import java.util.List;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -25,7 +27,11 @@ public interface UserProfileRepository extends PagingAndSortingRepository<UserPr
 
     @Override
     List<UserProfile> findAll();
-    
-    UserProfile findBySchoolAndUserAndProfile(School school, User user, Profile profile);
+
+    @Query("select up from UserProfile as up join up.licence as lic "
+            + "where lic.school = :school "
+            + "and up.user = :user "
+            + "and up.profile = :profile")
+    UserProfile findByLicenceYUserYProfile(@Param("school") School school, @Param("user") User user, @Param("profile") Profile profile);
 
 }
