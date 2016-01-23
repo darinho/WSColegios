@@ -23,6 +23,6 @@ public interface SchoolRepository extends PagingAndSortingRepository<School, Lon
     @Override
     List<School> findAll();
 
-    School findByNit(Long nit);
+    School findByNit(String nit);
 
 }

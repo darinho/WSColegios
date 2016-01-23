@@ -28,4 +28,5 @@ public interface LicenceRepository extends PagingAndSortingRepository<Licences, 
 
     Licences findTopBySchoolAndLicenceTypeAndStatusOrderByDatesAsc(School school, LicenceType licenceType, Status status);
 
+    List<Licences> findBySchool(School school);
 }

@@ -35,6 +35,7 @@ import gt.entities.School;
 import gt.entities.Status;
 import gt.entities.User;
 import gt.entities.UserProfile;
+import gt.entities.UserSession;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -271,18 +272,16 @@ public class UserImpl implements WSUser {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
-        Common.cleanSessionPrev(u.getIdUser());
+        List<UserSession> sessions = rs.getValidUsuarioSesions(u);
+        List<UserSession> closeSessions = new ArrayList<>();
+        sessions.stream().map((us) -> {
+            us.setEndDate(new Date());
+            return us;
+        }).forEach((us) -> {
+            closeSessions.add(us);
+        });
 
-        /*List<UserSession> sessions = rs.getValidUsuarioSesions(u);
-         List<UserSession> closeSessions = new ArrayList<>();
-         sessions.stream().map((us) -> {
-         us.setEndDate(new Date());
-         return us;
-         }).forEach((us) -> {
-         closeSessions.add(us);
-         });
-
-         rs.save(closeSessions);*/
+        rs.save(closeSessions);
         String token = Common.getToken();
 
         Calendar cal1 = Calendar.getInstance();
@@ -296,11 +295,9 @@ public class UserImpl implements WSUser {
             u.setSnChangePwd(false);
         }
 
-        /*UserSession sesion = new UserSession(0, u, token, new Date(), new Date());
+        UserSession sesion = new UserSession(null, u, token, new Date(), new Date());
 
-         rs.save(sesion);*/
-        Common.setTokenLocal(token, u.getIdUser());
-        DTOSession sesion = new DTOSession();
+        rs.save(sesion);
         sesion.setUser(u);
         sesion.setToken(token);
 

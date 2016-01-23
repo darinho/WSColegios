@@ -6,7 +6,7 @@
 package gt.dakaik.dto;
 
 import gt.entities.User;
-import gt.entities.Window;
+import gt.entities.Menu;
 import java.util.List;
 
 /**
@@ -16,13 +16,13 @@ import java.util.List;
 public class DTOSession {
 
     private User user;
-    private List<Window> windows;
+    private List<Menu> windows;
     private String token;
 
     public DTOSession() {
     }
 
-    public DTOSession(User user, List<Window> windows, String token) {
+    public DTOSession(User user, List<Menu> windows, String token) {
         this.user = user;
         this.windows = windows;
         this.token = token;
@@ -36,11 +36,11 @@ public class DTOSession {
         this.user = user;
     }
 
-    public List<Window> getWindows() {
+    public List<Menu> getWindows() {
         return windows;
     }
 
-    public void setWindows(List<Window> windows) {
+    public void setWindows(List<Menu> windows) {
         this.windows = windows;
     }
 
