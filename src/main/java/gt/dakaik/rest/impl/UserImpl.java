@@ -98,7 +98,8 @@ public class UserImpl implements WSUser {
     }
 
     @Override
-    public ResponseEntity<User> doCreate(User user, int idUsuario, String token) throws EntidadDuplicadaException, EntidadNoEncontradaException {
+    public ResponseEntity<User> doCreate(UserProfile pro, int idUsuario, String token) throws EntidadDuplicadaException, EntidadNoEncontradaException {
+        User user = pro.getUser();
         User u = repoU.findByTxtUser(user.getTxtUser());
         Boolean isUser = true;
         Map<String, String> mpResp = new HashMap<>();
@@ -178,13 +179,6 @@ public class UserImpl implements WSUser {
             isUser = false;
         }
 
-        if (user.getUserProfiles().isEmpty()) {
-            mpResp.put("message", "msj_falta_perfil");
-            mpResp.put("valor", "userProfile");
-            return new ResponseEntity(mpResp, HttpStatus.BAD_REQUEST);
-        }
-
-        UserProfile pro = user.getUserProfiles().get(0);
         UserProfile up = new UserProfile();
 
         Profile profile = repoProfile.findOne(pro.getProfile().getIdProfile());

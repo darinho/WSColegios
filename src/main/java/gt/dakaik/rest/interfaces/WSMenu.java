@@ -5,12 +5,9 @@
  */
 package gt.dakaik.rest.interfaces;
 
-import gt.dakaik.dto.DTOSession;
 import gt.dakaik.exceptions.EntidadDuplicadaException;
 import gt.dakaik.exceptions.EntidadNoEncontradaException;
-import gt.dakaik.exceptions.GeneralException;
-import gt.entities.User;
-import gt.entities.UserProfile;
+import gt.entities.Menu;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,47 +23,40 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Dario Calderon
  */
 @RestController
-@RequestMapping(value = "/user",
+@RequestMapping(value = "/menu",
         produces = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.APPLICATION_XML_VALUE})
-public interface WSUser {
+public interface WSMenu {
 
     @Transactional(readOnly = true)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<User> findById(
+    public ResponseEntity<Menu> findById(
             @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
             @PathVariable("id") Long id) throws EntidadNoEncontradaException;
 
     @Transactional(readOnly = true)
     @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public ResponseEntity<User> findAll(
+    public ResponseEntity<Menu> findAll(
             @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
     ) throws EntidadNoEncontradaException;
 
     @Transactional()
     @RequestMapping(value = "/set", method = RequestMethod.POST)
-    public ResponseEntity<User> doCreate(
-            @RequestBody UserProfile pro, @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
-    ) throws EntidadDuplicadaException, EntidadNoEncontradaException;
+    public ResponseEntity<Menu> doCreate(
+            @RequestBody Menu menu, @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
+    ) throws EntidadDuplicadaException;
 
     @Transactional()
     @RequestMapping(value = "/set", method = RequestMethod.PUT)
-    public ResponseEntity<User> doUpdate(
+    public ResponseEntity<Menu> doUpdate(
             @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
-            @RequestBody User user
+            @RequestBody Menu menu
     ) throws EntidadNoEncontradaException, EntidadDuplicadaException;
 
     @Transactional()
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<User> onDelete(
+    public ResponseEntity<Menu> onDelete(
             @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
-            @PathVariable("id") Long id
+            @PathVariable("id") Long idProfile
     ) throws EntidadNoEncontradaException;
-
-    @Transactional()
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseEntity<DTOSession> login(
-            @RequestParam(value = "sUsuario", required = true) String sUsuario,
-            @RequestParam(value = "pwd", required = true) String pwd
-    ) throws GeneralException;
 }
