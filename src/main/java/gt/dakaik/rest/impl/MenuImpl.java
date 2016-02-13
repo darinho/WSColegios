@@ -8,11 +8,18 @@ package gt.dakaik.rest.impl;
 import gt.dakaik.exceptions.EntidadDuplicadaException;
 import gt.dakaik.exceptions.EntidadNoEncontradaException;
 import gt.dakaik.rest.interfaces.WSMenu;
+import gt.dakaik.rest.repository.MenuProfileRepository;
 import gt.dakaik.rest.repository.MenuRepository;
+import gt.dakaik.rest.repository.ProfileRepository;
 import gt.dakaik.rest.repository.SchoolRepository;
 import gt.dakaik.rest.repository.UserProfileRepository;
 import gt.dakaik.rest.repository.UserRepository;
 import gt.entities.Menu;
+import gt.entities.Profile;
+import gt.entities.ProfileMenu;
+import gt.entities.User;
+import gt.entities.UserProfile;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +40,13 @@ public class MenuImpl implements WSMenu {
     @Autowired
     UserProfileRepository repoUProfile;
     @Autowired
+    ProfileRepository repoProfile;
+    @Autowired
     SchoolRepository repoSchool;
     @Autowired
     MenuRepository repoMenu;
+    @Autowired
+    MenuProfileRepository repoProfileMenu;
 
     @Override
     public ResponseEntity<Menu> findById(int idUsuario, String token, Long id) throws EntidadNoEncontradaException {
@@ -48,6 +59,13 @@ public class MenuImpl implements WSMenu {
         }
     }
 
+    @Override
+    public ResponseEntity<Menu> findByUserProfile(int idUsuario, String token, Long idProfile) throws EntidadNoEncontradaException {
+        
+        List<Menu> menus = repoMenu.findByProfile(idProfile);
+        return new ResponseEntity(menus, HttpStatus.OK);
+    }
+    
     @Override
     public ResponseEntity<Menu> findAll(int idUsuario, String token) throws EntidadNoEncontradaException {
         return new ResponseEntity(repoMenu.findAll(), HttpStatus.OK);

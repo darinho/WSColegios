@@ -6,7 +6,8 @@
 package gt.dakaik.dto;
 
 import gt.entities.User;
-import gt.entities.Menu;
+import gt.entities.UserProfile;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,17 +16,44 @@ import java.util.List;
  */
 public class DTOSession {
 
+    private Long idUserSession;
     private User user;
-    private List<Menu> windows;
+    private Long idUser;
     private String token;
+    private Date startDate;
+    private Date endDate;
+    private List<UserProfile> userProfiles;
+    private UserProfile userProfile;
 
     public DTOSession() {
     }
 
-    public DTOSession(User user, List<Menu> windows, String token) {
+    public DTOSession(Long idUserSession, User user, Long idUser, String token, Date startDate, Date endDate) {
+        this.idUserSession = idUserSession;
         this.user = user;
-        this.windows = windows;
+        this.idUser = idUser;
         this.token = token;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+    
+    public DTOSession(Long idUserSession, User user, Long idUser, String token, Date startDate, Date endDate, List<UserProfile> userProfiles, UserProfile userProfile) {
+        this.idUserSession = idUserSession;
+        this.user = user;
+        this.idUser = idUser;
+        this.token = token;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.userProfiles = userProfiles;
+        this.userProfile = userProfile;
+    }
+
+    public Long getIdUserSession() {
+        return idUserSession;
+    }
+
+    public void setIdUserSession(Long idUserSession) {
+        this.idUserSession = idUserSession;
     }
 
     public User getUser() {
@@ -36,12 +64,12 @@ public class DTOSession {
         this.user = user;
     }
 
-    public List<Menu> getWindows() {
-        return windows;
+    public Long getIdUser() {
+        return idUser;
     }
 
-    public void setWindows(List<Menu> windows) {
-        this.windows = windows;
+    public void setIdUser(Long idUser) {
+        this.idUser = idUser;
     }
 
     public String getToken() {
@@ -50,6 +78,38 @@ public class DTOSession {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public List<UserProfile> getUserProfiles() {
+        return userProfiles;
+    }
+
+    public void setUserProfiles(List<UserProfile> userProfiles) {
+        this.userProfiles = userProfiles;
+    }
+
+    public UserProfile getUserProfile() {
+        return userProfile;
+    }
+
+    public void setUserProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
     }
 
 }
