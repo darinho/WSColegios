@@ -5,8 +5,7 @@
  */
 package gt.dakaik.rest.repository;
 
-import gt.entities.User;
-import gt.entities.UserSession;
+import gt.entities.ProfileMenu;
 import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -18,12 +17,16 @@ import org.springframework.stereotype.Repository;
  * @author Dario Calderon
  */
 @Repository
-public interface UserSessionRepository extends PagingAndSortingRepository<UserSession, Long> {
+public interface MenuProfileRepository extends PagingAndSortingRepository<ProfileMenu, Long> {
 
-    @Query("from UserSession where user = :user and endDate = startDate")
-    List<UserSession> getValidUsuarioSesions(@Param("user") User user);
+    @Override
+    public ProfileMenu findOne(Long id);
 
-    List<UserSession> findByToken(String txtToken);
+    @Override
+    List<ProfileMenu> findAll();
     
-    
+    @Query("select count(*) FROM ProfileMenu as pm join pm.profile as p join pm.menu as m "
+            + "WHERE m.idMenu = :menu AND p.idProfile = :profile AND pm.snActive = true")
+    Long findByAccessProfile(@Param("menu") Long idMenu, @Param("profile") Long idProfile);
+
 }

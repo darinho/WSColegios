@@ -31,18 +31,18 @@ public interface WSCountry {
     @Transactional(readOnly = true)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Country> findById(
-            @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
+            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
             @PathVariable("id") Long id) throws EntidadNoEncontradaException;
 
     @Transactional(readOnly = true)
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResponseEntity<Country> findAll(
-            @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
+            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
     ) throws EntidadNoEncontradaException;
 
     @Transactional()
     @RequestMapping(value = "/set", method = RequestMethod.POST)
     public ResponseEntity<Country> doCreate(
-            @RequestBody Country country, @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
+            @RequestBody Country country, @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
     ) throws EntidadDuplicadaException;
 }

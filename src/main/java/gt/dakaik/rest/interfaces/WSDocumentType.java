@@ -31,32 +31,32 @@ public interface WSDocumentType {
     @Transactional(readOnly = true)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<DocumentType> findById(
-            @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
+            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
             @PathVariable("id") Long id) throws EntidadNoEncontradaException;
 
     @Transactional(readOnly = true)
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResponseEntity<DocumentType> findAll(
-            @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
+            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
     ) throws EntidadNoEncontradaException;
 
     @Transactional()
     @RequestMapping(value = "/set", method = RequestMethod.POST)
     public ResponseEntity<DocumentType> doCreate(
-            @RequestBody DocumentType profile, @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
+            @RequestBody DocumentType profile, @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
     ) throws EntidadDuplicadaException;
 
     @Transactional()
     @RequestMapping(value = "/set", method = RequestMethod.PUT)
     public ResponseEntity<DocumentType> doUpdate(
-            @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
+            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
             @RequestBody DocumentType profile
     ) throws EntidadNoEncontradaException, EntidadDuplicadaException;
 
     @Transactional()
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<DocumentType> onDelete(
-            @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
+            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
             @PathVariable("id") Long idDocumentType
     ) throws EntidadNoEncontradaException;
 }

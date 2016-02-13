@@ -29,20 +29,20 @@ public interface WSLicence {
     @Transactional(readOnly = true)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Licences> findById(
-            @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
+            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
             @PathVariable("id") Long id) throws EntidadNoEncontradaException;
 
     @Transactional(readOnly = true)
     @RequestMapping(value = "/{idSchool}/get", method = RequestMethod.GET)
     public ResponseEntity<Licences> findBySchool(
-            @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
+            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
             @PathVariable("idSchool") long idSchool
     ) throws EntidadNoEncontradaException;
 
     @Transactional()
     @RequestMapping(value = "/{idSchool}/{quantity}/{licType}/set", method = RequestMethod.POST)
     public ResponseEntity<Licences> onCreate(
-            @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
+            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
             @PathVariable("idSchool") long idSchool, @PathVariable("quantity") int quantity, @PathVariable("licType") long licType
     ) throws EntidadNoEncontradaException;
 }

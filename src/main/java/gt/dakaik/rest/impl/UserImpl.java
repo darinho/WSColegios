@@ -17,6 +17,7 @@ import gt.dakaik.rest.repository.DocumentRepository;
 import gt.dakaik.rest.repository.DocumentTypeRepository;
 import gt.dakaik.rest.repository.LicenceRepository;
 import gt.dakaik.rest.repository.LicenceTypeRepository;
+import gt.dakaik.rest.repository.MenuProfileRepository;
 import gt.dakaik.rest.repository.PersonRepository;
 import gt.dakaik.rest.repository.ProfileRepository;
 import gt.dakaik.rest.repository.SchoolRepository;
@@ -31,6 +32,7 @@ import gt.entities.LicenceType;
 import gt.entities.Licences;
 import gt.entities.Person;
 import gt.entities.Profile;
+import gt.entities.ProfileMenu;
 import gt.entities.School;
 import gt.entities.Status;
 import gt.entities.User;
@@ -42,6 +44,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,9 +60,10 @@ import org.springframework.stereotype.Component;
 public class UserImpl implements WSUser {
 
     Logger eLog = LoggerFactory.getLogger(this.getClass());
-    TokenImpl tokenI = new TokenImpl();
     @Autowired
     UserRepository repoU;
+    @Autowired
+    MenuProfileRepository repoMenu;
     @Autowired
     UserProfileRepository repoUProfile;
     @Autowired
@@ -80,6 +84,18 @@ public class UserImpl implements WSUser {
     DocumentRepository repoDocument;
     @Autowired
     DocumentTypeRepository repoDocumentType;
+
+    private Boolean valideSession(Long idUser, String token, Long idSession, Long idProfile, Long idMenu) {
+        UserSession us = rs.findOne(idSession);
+        if (us == null || !Objects.equals(us.getUser().getIdUser(), idUser) || !us.getToken().equals(token)) {
+            return false;
+        }
+
+        Long ifExistP = repoMenu.findByAccessProfile(idMenu, idProfile);
+
+        return ifExistP != null && ifExistP > 0;
+
+    }
 
     @Override
     public ResponseEntity<User> findById(int idUsuario, String token, Long id) throws EntidadNoEncontradaException {
@@ -102,6 +118,7 @@ public class UserImpl implements WSUser {
         User user = pro.getUser();
         User u = repoU.findByTxtUser(user.getTxtUser());
         Boolean isUser = true;
+        String pwd = "";
         Map<String, String> mpResp = new HashMap<>();
         if (u == null) {
             u = new User();
@@ -165,7 +182,7 @@ public class UserImpl implements WSUser {
             });
 
             repoDocument.save(doctos);
-            String pwd = user.getTxtPwd() != null ? user.getTxtPwd() : "UsCollage" + person.getIdPerson();
+            pwd = user.getTxtPwd() != null ? user.getTxtPwd() : "UsCollage" + person.getIdPerson();
             u.setLastDatePwd(new Date());
             u.setIntDaysChangePwd(user.getIntDaysChangePwd() == 0 ? 30 : user.getIntDaysChangePwd());
             u.setSnChangePwd(false);
@@ -221,9 +238,17 @@ public class UserImpl implements WSUser {
         }
 
         up.setUser(u);
+        up.setSnActive(true);
         repoUProfile.save(up);
         licence.setStatus(Status.U);
         repoLic.save(licence);
+        String contentEmail = Common.getTemplateSendEmailRegister(u.getTxtUser(), profile.getTxtDescription(), school.getTxtName(), licence.getTxtLicence(), pwd);
+        /*try {
+            MimeMessage mail = Common.createEmail(u.getTxtUser(), "NO-RESPONDER Bienvenido a Colegios GT", contentEmail);
+            Common.sen
+            Common.sendEmail("NO-RESPONDER Bienvenido a Colegios GT", contentEmail, u.getTxtUser());
+        } catch (Exception e) {
+        }*/
         return new ResponseEntity(repoU.findOne(u.getIdUser()), HttpStatus.OK);
     }
 
@@ -289,13 +314,47 @@ public class UserImpl implements WSUser {
             u.setSnChangePwd(false);
         }
 
-        UserSession sesion = new UserSession(null, u, token, new Date(), new Date());
-
+        UserSession sesion = new UserSession(null, u.getIdUser(), token, new Date(), new Date());
         rs.save(sesion);
-        sesion.setUser(u);
-        sesion.setToken(token);
+        DTOSession ses = new DTOSession(sesion.getIdUserSession(), u, u.getIdUser(), sesion.getToken(), sesion.getStartDate(), sesion.getEndDate());
+        
+        List<UserProfile> uprof = repoUProfile.findByUserAndSnActiveTrue(u);
+        
+        if(uprof.isEmpty()){
+            throw new GeneralException("No Profile Available");
+        }else if (uprof.size() == 1){
+            ses.setUserProfile(uprof.get(0));
+        }else{
+            ses.setUserProfiles(uprof);
+        }
+        
+        return new ResponseEntity(ses, HttpStatus.OK);
+    }
 
-        return new ResponseEntity(sesion, HttpStatus.OK);
+    @Override
+    public ResponseEntity<DTOSession> getByIdSesion(Long idUsuario, String token, Long idSession) throws GeneralException {
+
+        UserSession sesion = rs.findOne(idSession);
+
+        if (sesion == null || !Objects.equals(sesion.getUser().getIdUser(), idUsuario) || !sesion.getToken().equals(token)) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        User u = sesion.getUser();
+
+        DTOSession ses = new DTOSession(sesion.getIdUserSession(), u, u.getIdUser(), sesion.getToken(), sesion.getStartDate(), sesion.getEndDate());
+        
+        List<UserProfile> uprof = repoUProfile.findByUserAndSnActiveTrue(u);
+        
+        if(uprof.isEmpty()){
+            throw new GeneralException("No Profile Available");
+        }else if (uprof.size() == 1){
+            ses.setUserProfile(uprof.get(0));
+        }else{
+            ses.setUserProfiles(uprof);
+        }
+
+        return new ResponseEntity(ses, HttpStatus.OK);
     }
 
 }

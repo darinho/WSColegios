@@ -31,32 +31,32 @@ public interface WSLicenceType {
     @Transactional(readOnly = true)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<LicenceType> findById(
-            @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
+            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
             @PathVariable("id") Long id) throws EntidadNoEncontradaException;
 
     @Transactional(readOnly = true)
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResponseEntity<LicenceType> findAll(
-            @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
+            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
     ) throws EntidadNoEncontradaException;
 
     @Transactional()
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public ResponseEntity<LicenceType> doCreate(
-            @RequestBody LicenceType lictype, @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
+            @RequestBody LicenceType lictype, @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
     ) throws EntidadDuplicadaException, EntidadNoEncontradaException;
 
     @Transactional()
     @RequestMapping(value = "/", method = RequestMethod.PUT)
     public ResponseEntity<LicenceType> doUpdate(
-            @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
+            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
             @RequestBody LicenceType lictype
     ) throws EntidadNoEncontradaException, EntidadDuplicadaException;
 
     @Transactional()
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<LicenceType> onDelete(
-            @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
+            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
             @PathVariable("id") Long idLicenceType
     ) throws EntidadNoEncontradaException;
 }

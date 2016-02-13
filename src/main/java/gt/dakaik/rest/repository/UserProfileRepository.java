@@ -31,7 +31,10 @@ public interface UserProfileRepository extends PagingAndSortingRepository<UserPr
     @Query("select up from UserProfile as up join up.licence as lic "
             + "where lic.school = :school "
             + "and up.user = :user "
-            + "and up.profile = :profile")
+            + "and up.profile = :profile "
+            + "and up.snActive = true")
     UserProfile findByLicenceYUserYProfile(@Param("school") School school, @Param("user") User user, @Param("profile") Profile profile);
+
+    List<UserProfile> findByUserAndSnActiveTrue(User user);
 
 }

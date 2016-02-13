@@ -34,32 +34,32 @@ public interface WSUser {
     @Transactional(readOnly = true)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<User> findById(
-            @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
+            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
             @PathVariable("id") Long id) throws EntidadNoEncontradaException;
 
     @Transactional(readOnly = true)
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResponseEntity<User> findAll(
-            @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
+            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
     ) throws EntidadNoEncontradaException;
 
     @Transactional()
     @RequestMapping(value = "/set", method = RequestMethod.POST)
     public ResponseEntity<User> doCreate(
-            @RequestBody UserProfile pro, @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
+            @RequestBody UserProfile pro, @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
     ) throws EntidadDuplicadaException, EntidadNoEncontradaException;
 
     @Transactional()
     @RequestMapping(value = "/set", method = RequestMethod.PUT)
     public ResponseEntity<User> doUpdate(
-            @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
+            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
             @RequestBody User user
     ) throws EntidadNoEncontradaException, EntidadDuplicadaException;
 
     @Transactional()
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<User> onDelete(
-            @RequestParam(value = "idUsuario", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
+            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
             @PathVariable("id") Long id
     ) throws EntidadNoEncontradaException;
 
@@ -68,5 +68,12 @@ public interface WSUser {
     public ResponseEntity<DTOSession> login(
             @RequestParam(value = "sUsuario", required = true) String sUsuario,
             @RequestParam(value = "pwd", required = true) String pwd
+    ) throws GeneralException;
+    
+    @Transactional()
+    @RequestMapping(value = "/session", method = RequestMethod.POST)
+    public ResponseEntity<DTOSession> getByIdSesion(
+            @RequestParam(value = "idUser", defaultValue = "0") Long idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
+            @RequestParam(value = "idSession", defaultValue = "0") Long idSession
     ) throws GeneralException;
 }
