@@ -5,6 +5,8 @@
  */
 package gt.dakaik.rest.repository;
 
+import gt.entities.Menu;
+import gt.entities.Profile;
 import gt.entities.ProfileMenu;
 import java.util.List;
 import org.springframework.data.jpa.repository.Query;
@@ -24,9 +26,15 @@ public interface MenuProfileRepository extends PagingAndSortingRepository<Profil
 
     @Override
     List<ProfileMenu> findAll();
-    
+
     @Query("select count(*) FROM ProfileMenu as pm join pm.profile as p join pm.menu as m "
             + "WHERE m.idMenu = :menu AND p.idProfile = :profile AND pm.snActive = true")
     Long findByAccessProfile(@Param("menu") Long idMenu, @Param("profile") Long idProfile);
+
+    @Query(" FROM ProfileMenu as pm join pm.profile as p join pm.menu as m "
+            + "WHERE m.idMenu = :menu AND p.idProfile = :profile AND pm.snActive = true")
+    ProfileMenu findByProfileMenu(@Param("menu") Long idMenu, @Param("profile") Long idProfile);
+
+    ProfileMenu findByProfileAndMenu(Profile p, Menu m);
 
 }

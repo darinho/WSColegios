@@ -5,7 +5,7 @@
  */
 package gt.dakaik.rest.repository;
 
-import gt.entities.LicenceType;
+import gt.entities.Profile;
 import gt.entities.Licences;
 import gt.entities.School;
 import gt.entities.Status;
@@ -26,7 +26,7 @@ public interface LicenceRepository extends PagingAndSortingRepository<Licences, 
     @Override
     List<Licences> findAll();
 
-    Licences findTopBySchoolAndLicenceTypeAndStatusOrderByDatesAsc(School school, LicenceType licenceType, Status status);
+    Licences findTopBySchoolAndProfileAndStatusOrderByDatesAsc(School school, Profile profile, Status status);
 
     List<Licences> findBySchool(School school);
 }

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -69,11 +70,16 @@ public interface WSUser {
             @RequestParam(value = "sUsuario", required = true) String sUsuario,
             @RequestParam(value = "pwd", required = true) String pwd
     ) throws GeneralException;
-    
+
     @Transactional()
     @RequestMapping(value = "/session", method = RequestMethod.POST)
     public ResponseEntity<DTOSession> getByIdSesion(
             @RequestParam(value = "idUser", defaultValue = "0") Long idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
             @RequestParam(value = "idSession", defaultValue = "0") Long idSession
     ) throws GeneralException;
+
+    @RequestMapping(value = "/{idUser}/uploadimage", method = RequestMethod.POST)
+    public ResponseEntity<String> handleFileUpload(@PathVariable("idUser") Long idUser,
+            @RequestParam("file") MultipartFile file) throws EntidadNoEncontradaException;
+
 }

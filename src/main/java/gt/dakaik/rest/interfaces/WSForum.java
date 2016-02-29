@@ -5,9 +5,9 @@
  */
 package gt.dakaik.rest.interfaces;
 
-import gt.dakaik.exceptions.EntidadDuplicadaException;
 import gt.dakaik.exceptions.EntidadNoEncontradaException;
-import gt.entities.LicenceType;
+import gt.entities.City;
+import gt.entities.Forum;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,40 +23,31 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Dario Calderon
  */
 @RestController
-@RequestMapping(value = "/licencetype",
+@RequestMapping(value = "/forum",
         produces = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.APPLICATION_XML_VALUE})
-public interface WSLicenceType {
+public interface WSForum {
 
     @Transactional(readOnly = true)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<LicenceType> findById(
+    public ResponseEntity<Forum> findById(
             @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
             @PathVariable("id") Long id) throws EntidadNoEncontradaException;
 
     @Transactional(readOnly = true)
-    @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public ResponseEntity<LicenceType> findAll(
-            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
-    ) throws EntidadNoEncontradaException;
-
-    @Transactional()
-    @RequestMapping(value = "/", method = RequestMethod.POST)
-    public ResponseEntity<LicenceType> doCreate(
-            @RequestBody LicenceType lictype, @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token
-    ) throws EntidadDuplicadaException, EntidadNoEncontradaException;
-
-    @Transactional()
-    @RequestMapping(value = "/", method = RequestMethod.PUT)
-    public ResponseEntity<LicenceType> doUpdate(
+    @RequestMapping(value = "/get/{userProfile}", method = RequestMethod.GET)
+    public ResponseEntity<Forum> findByUser(
             @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
-            @RequestBody LicenceType lictype
-    ) throws EntidadNoEncontradaException, EntidadDuplicadaException;
-
-    @Transactional()
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<LicenceType> onDelete(
-            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
-            @PathVariable("id") Long idLicenceType
+            @RequestParam(value = "page", defaultValue = "0") int page, @PathVariable("userProfile") int idUserProfile
     ) throws EntidadNoEncontradaException;
+    
+    @Transactional()
+    @RequestMapping(value = "/{type}/{id}", method = RequestMethod.POST)
+    public ResponseEntity<Forum> onCreate(
+            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
+            @PathVariable(value = "type") char type, @PathVariable(value = "id") long id,
+            @RequestBody Forum forum
+    ) throws EntidadNoEncontradaException;
+    
+    
 }

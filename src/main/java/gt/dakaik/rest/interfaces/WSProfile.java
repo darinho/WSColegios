@@ -9,6 +9,7 @@ import gt.dakaik.exceptions.EntidadDuplicadaException;
 import gt.dakaik.exceptions.EntidadNoEncontradaException;
 import gt.entities.Profile;
 import gt.entities.User;
+import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,5 +60,12 @@ public interface WSProfile {
     public ResponseEntity<Profile> onDelete(
             @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
             @PathVariable("id") Long idProfile
+    ) throws EntidadNoEncontradaException;
+    
+    @Transactional()
+    @RequestMapping(value = "/setmenus/{id}", method = RequestMethod.POST)
+    public ResponseEntity<String> onSetMenus(
+            @RequestParam(value = "idUser", defaultValue = "0") int idUsuario, @RequestParam(value = "token", defaultValue = "") String token,
+            @PathVariable("id") Long idProfile, @RequestBody List<Long> idPantallas
     ) throws EntidadNoEncontradaException;
 }
