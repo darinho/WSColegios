@@ -7,16 +7,13 @@ package gt.dakaik.rest.impl;
 
 import gt.dakaik.common.Common;
 import gt.dakaik.exceptions.EntidadNoEncontradaException;
-import gt.dakaik.rest.interfaces.WSCity;
 import gt.dakaik.rest.interfaces.WSLicence;
-import gt.dakaik.rest.repository.CityRepository;
 import gt.dakaik.rest.repository.LicenceRepository;
-import gt.dakaik.rest.repository.LicenceTypeRepository;
+import gt.dakaik.rest.repository.ProfileRepository;
 import gt.dakaik.rest.repository.SchoolRepository;
 import gt.dakaik.rest.repository.UserRepository;
-import gt.entities.City;
-import gt.entities.LicenceType;
 import gt.entities.Licences;
+import gt.entities.Profile;
 import gt.entities.School;
 import gt.entities.Status;
 import java.util.ArrayList;
@@ -44,7 +41,7 @@ public class LicenceImpl implements WSLicence {
     @Autowired
     LicenceRepository repoLic;
     @Autowired
-    LicenceTypeRepository repoLicType;
+    ProfileRepository repoLicType;
 
     @Override
     public ResponseEntity<Licences> findById(int idUsuario, String token, Long id) throws EntidadNoEncontradaException {
@@ -73,7 +70,7 @@ public class LicenceImpl implements WSLicence {
         if (school == null) {
             throw new EntidadNoEncontradaException("Entity School");
         }
-        LicenceType lt = repoLicType.findOne(idLicenceType);
+        Profile lt = repoLicType.findOne(idLicenceType);
         if (lt == null) {
             throw new EntidadNoEncontradaException("Entity LicenceType");
         }
@@ -81,7 +78,7 @@ public class LicenceImpl implements WSLicence {
         for (int i = 0; i < quantity; i++) {
             Licences lic = new Licences();
             lic.setDates(new Date());
-            lic.setLicenceType(lt);
+            lic.setProfile(lt);
             lic.setSchool(school);
             lic.setSnActive(true);
             lic.setStatus(Status.A);

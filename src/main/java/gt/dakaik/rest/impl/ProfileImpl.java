@@ -8,11 +8,17 @@ package gt.dakaik.rest.impl;
 import gt.dakaik.exceptions.EntidadDuplicadaException;
 import gt.dakaik.exceptions.EntidadNoEncontradaException;
 import gt.dakaik.rest.interfaces.WSProfile;
+import gt.dakaik.rest.repository.MenuProfileRepository;
+import gt.dakaik.rest.repository.MenuRepository;
 import gt.dakaik.rest.repository.ProfileRepository;
 import gt.dakaik.rest.repository.SchoolRepository;
 import gt.dakaik.rest.repository.UserProfileRepository;
 import gt.dakaik.rest.repository.UserRepository;
+import gt.entities.Menu;
 import gt.entities.Profile;
+import gt.entities.ProfileMenu;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +38,10 @@ public class ProfileImpl implements WSProfile {
     UserRepository repoU;
     @Autowired
     UserProfileRepository repoUProfile;
+    @Autowired
+    MenuProfileRepository repoProfileMenu;
+    @Autowired
+    MenuRepository repoMenu;
     @Autowired
     SchoolRepository repoSchool;
     @Autowired
@@ -81,6 +91,37 @@ public class ProfileImpl implements WSProfile {
         p.setSnActive(Boolean.FALSE);
 
         return new ResponseEntity(repoProfile.save(p), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<String> onSetMenus(int idUsuario, String token, Long idProfile, List<Long> idPantallas) throws EntidadNoEncontradaException {
+
+        Profile p = repoProfile.findOne(idProfile);
+
+        if (p == null) {
+            throw new EntidadNoEncontradaException("Entity Profile");
+        }
+
+        List<ProfileMenu> menus = new ArrayList<>();
+        for (Long mid : idPantallas) {
+            Menu m = repoMenu.findOne(mid);
+            if (m == null) {
+                throw new EntidadNoEncontradaException("Entity Menu");
+            }
+            ProfileMenu pm = repoProfileMenu.findByProfileAndMenu(p, m);
+            if (pm == null) {
+                pm = new ProfileMenu();
+                pm.setMenu(m);
+                pm.setProfile(p);
+                pm.setSnActive(true);
+                menus.add(pm);
+            } else if (!pm.isSnActive()) {
+                pm.setSnActive(true);
+                menus.add(pm);
+            }
+        }
+        repoProfileMenu.save(menus);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 }

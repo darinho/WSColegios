@@ -16,7 +16,6 @@ import gt.dakaik.rest.repository.CityRepository;
 import gt.dakaik.rest.repository.DocumentRepository;
 import gt.dakaik.rest.repository.DocumentTypeRepository;
 import gt.dakaik.rest.repository.LicenceRepository;
-import gt.dakaik.rest.repository.LicenceTypeRepository;
 import gt.dakaik.rest.repository.MenuProfileRepository;
 import gt.dakaik.rest.repository.PersonRepository;
 import gt.dakaik.rest.repository.ProfileRepository;
@@ -28,16 +27,18 @@ import gt.entities.Address;
 import gt.entities.City;
 import gt.entities.Document;
 import gt.entities.DocumentType;
-import gt.entities.LicenceType;
 import gt.entities.Licences;
 import gt.entities.Person;
 import gt.entities.Profile;
-import gt.entities.ProfileMenu;
 import gt.entities.School;
 import gt.entities.Status;
 import gt.entities.User;
 import gt.entities.UserProfile;
 import gt.entities.UserSession;
+import gt.megapaca.fileprocessing.CompressImages;
+import gt.megapaca.fileprocessing.SFTPinJava;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -51,6 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -70,8 +72,6 @@ public class UserImpl implements WSUser {
     SchoolRepository repoSchool;
     @Autowired
     LicenceRepository repoLic;
-    @Autowired
-    LicenceTypeRepository repoLicType;
     @Autowired
     CityRepository repoCity;
     @Autowired
@@ -213,13 +213,7 @@ public class UserImpl implements WSUser {
             mpResp.put("valor", "school");
             return new ResponseEntity(mpResp, HttpStatus.NOT_FOUND);
         }
-        LicenceType licType = repoLicType.findOne(pro.getLicence().getLicenceType().getId());
-        if (licType == null) {
-            mpResp.put("message", "msj_no_existe");
-            mpResp.put("valor", "LicenceType");
-            return new ResponseEntity(mpResp, HttpStatus.NOT_FOUND);
-        }
-        Licences licence = repoLic.findTopBySchoolAndLicenceTypeAndStatusOrderByDatesAsc(school, licType, Status.A);
+        Licences licence = repoLic.findTopBySchoolAndProfileAndStatusOrderByDatesAsc(school, profile, Status.A);
 
         if (licence == null) {
             mpResp.put("message", "msj_no_hay_licencias");
@@ -317,17 +311,17 @@ public class UserImpl implements WSUser {
         UserSession sesion = new UserSession(null, u.getIdUser(), token, new Date(), new Date());
         rs.save(sesion);
         DTOSession ses = new DTOSession(sesion.getIdUserSession(), u, u.getIdUser(), sesion.getToken(), sesion.getStartDate(), sesion.getEndDate());
-        
+
         List<UserProfile> uprof = repoUProfile.findByUserAndSnActiveTrue(u);
-        
-        if(uprof.isEmpty()){
+
+        if (uprof.isEmpty()) {
             throw new GeneralException("No Profile Available");
-        }else if (uprof.size() == 1){
+        } else if (uprof.size() == 1) {
             ses.setUserProfile(uprof.get(0));
-        }else{
+        } else {
             ses.setUserProfiles(uprof);
         }
-        
+
         return new ResponseEntity(ses, HttpStatus.OK);
     }
 
@@ -343,18 +337,57 @@ public class UserImpl implements WSUser {
         User u = sesion.getUser();
 
         DTOSession ses = new DTOSession(sesion.getIdUserSession(), u, u.getIdUser(), sesion.getToken(), sesion.getStartDate(), sesion.getEndDate());
-        
+
         List<UserProfile> uprof = repoUProfile.findByUserAndSnActiveTrue(u);
-        
-        if(uprof.isEmpty()){
+
+        if (uprof.isEmpty()) {
             throw new GeneralException("No Profile Available");
-        }else if (uprof.size() == 1){
+        } else if (uprof.size() == 1) {
             ses.setUserProfile(uprof.get(0));
-        }else{
+        } else {
             ses.setUserProfiles(uprof);
         }
 
         return new ResponseEntity(ses, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<String> handleFileUpload(Long idUser, MultipartFile file) throws EntidadNoEncontradaException {
+        User u = repoU.findOne(idUser);
+        if (u != null) {
+            if (!file.isEmpty()) {
+                try {
+                    File convFile = new File(file.getOriginalFilename());
+                    convFile.createNewFile();
+                    FileOutputStream fos = new FileOutputStream(convFile);
+                    fos.write(file.getBytes());
+                    fos.close();
+                    CompressImages cImage = new CompressImages(convFile, "img");
+                    List<File> files = cImage.getFamilyFixedProcessedFiles();
+                    System.out.println(files.size() + " files to upload.");
+
+                    //************
+                    String SFTPHOST = "www.colegios.e.gt";
+                    int SFTPPORT = 1157;
+                    String SFTPUSER = "colegiose";
+                    String SFTPPASS = "Dario2015.";
+                    String SFTPWORKINGDIR = "/home/colegiose/public_html/images/u/";
+                    String PARENT_PATH = "" + idUser;
+                    SFTPinJava.saveFileToSftp(files, false, SFTPHOST, SFTPPORT, SFTPUSER, SFTPPASS, SFTPWORKINGDIR, PARENT_PATH);
+                    //************
+                    u.setTxtImageURI("http://www.colegios.e.gt/images/u/" + idUser + "/");
+                    repoU.save(u);
+                    return new ResponseEntity(u.getTxtImageURI(), HttpStatus.OK);
+                } catch (Exception e) {
+                    e.getMessage();
+                    throw new EntidadNoEncontradaException();
+                }
+            } else {
+                throw new EntidadNoEncontradaException();
+            }
+        } else {
+            throw new EntidadNoEncontradaException("User");
+        }
     }
 
 }
