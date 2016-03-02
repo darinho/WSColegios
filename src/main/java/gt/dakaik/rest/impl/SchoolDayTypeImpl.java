@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-@Component()
+@Component
 public class SchoolDayTypeImpl implements WSSchoolDayType {
 
     Logger eLog = LoggerFactory.getLogger(this.getClass());

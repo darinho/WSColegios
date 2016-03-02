@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author Wilver
  */
-@RestController()
+@RestController
 @RequestMapping(value = "/schoolDayType", produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
 public interface WSSchoolDayType {
     
